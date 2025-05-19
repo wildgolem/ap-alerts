@@ -45,8 +45,8 @@ def filter_flights(data):
     filtered = []
     for entry in data.get("data", []):
         for trip in entry.get("AvailabilityTrips", []):
-            if trip["RemainingSeats"] <= 0:
-                continue
+            #if trip["RemainingSeats"] <= 0:
+            #    continue
             cost = trip["MileageCost"] * 0.02 + trip["TotalTaxes"] / 100
             if trip["Stops"] == 0 and cost <= DIRECT_COST and trip["TotalDuration"] <= DIRECT_DURATION*60:
                 filtered.append(trip)
