@@ -18,7 +18,7 @@ def send_flight_batches(flights, webhook_url, emoji):
         chunk = flights[i:i + MAX_FIELDS]
         embed = {
             "title": f"**{emoji} {total} flights found ({page_number} of {total_pages})**",
-            "color": 750000,
+            "color": 5793266,
             "fields": [format_flight(f) for f in chunk]
         }
         payload = {"embeds": [embed]}
