@@ -8,7 +8,7 @@ def main():
     dep_data = fetch_flights(START, END)
     dep_filtered = filter_flights(dep_data)
 
-    ret_data = fetch_flights(START, END)
+    ret_data = fetch_flights(END, START)
     ret_filtered = filter_flights(ret_data)
 
     send_discord_message(dep_filtered, ret_filtered)
