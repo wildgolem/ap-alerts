@@ -60,6 +60,16 @@ def save_to_file(data, filename):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def send_discord_message(departing_count, returning_count):
+    webhook_url = os.getenv("WEBHOOK_URL")
+    message = {
+        "content": f"🛫 Found {departing_count} departing flights\n🛬 Found {returning_count} returning flights"
+    }
+
+    response = requests.post(webhook_url, json=message)
+    response.raise_for_status()
+
+
 def main():
     dep_url = build_url(START, END)
     dep_data = fetch_flights(dep_url)
@@ -70,6 +80,8 @@ def main():
     ret_data = fetch_flights(ret_url)
     ret_filtered = filter_flights(ret_data)
     save_to_file(ret_filtered, "returning.json")
+
+    send_discord_message(len(dep_filtered), len(ret_filtered))
 
 
 if __name__ == "__main__":
