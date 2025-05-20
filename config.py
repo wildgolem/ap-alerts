@@ -1,5 +1,5 @@
 START = "YUL"
-END = "NRT,ICN"
+END = "NRT"
 COST = 1100
 CPP = 0.02
 MAX_STOPS = 1
