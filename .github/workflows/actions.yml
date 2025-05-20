@@ -2,7 +2,7 @@ name: run main.py
 
 on:
   schedule:
-    - cron: '0 * * * *' # Every hour
+    - cron: '55 5 * * *'
 
 jobs:
   build:
@@ -28,16 +28,3 @@ jobs:
           WEBHOOK_DEPART: ${{ secrets.WEBHOOK_DEPART }}
           WEBHOOK_RETURN: ${{ secrets.WEBHOOK_RETURN }}
         run: python main.py
-
-      - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git diff-index --quiet HEAD || git commit -m "updated alerts"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
