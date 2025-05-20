@@ -1,0 +1,4 @@
+START = "YUL"
+END = "NRT,ICN"
+COST = 1000
+RATE = 0.015

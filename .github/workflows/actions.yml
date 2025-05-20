@@ -2,7 +2,7 @@ name: run main.py
 
 on:
   schedule:
-    - cron: '*/30 * * * *' # Every 30 minutes
+    - cron: '0 * * * *' # Every hour
 
 jobs:
   build:
@@ -25,7 +25,8 @@ jobs:
       - name: Execute Python script
         env:
           API_KEY: ${{ secrets.API_KEY }}
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          WEBHOOK_DEPART: ${{ secrets.WEBHOOK_DEPART }}
+          WEBHOOK_RETURN: ${{ secrets.WEBHOOK_RETURN }}
         run: python main.py
 
       - name: Commit changes
