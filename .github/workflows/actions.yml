@@ -2,8 +2,11 @@ name: run main.py
 
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
