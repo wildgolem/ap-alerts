@@ -8,9 +8,9 @@ WEBHOOK_URL = os.getenv("WEBHOOK_FLIGHT")
 ID_FILE = "id.txt"
 
 
-def write_flights_to_file(flights, emoji, filename):
+def write_flights_to_file(flights, filename):
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(f"{emoji} {len(flights)} flights found\n\n")
+        f.write(f"{len(flights)} FLIGHTS FOUND\n\n")
         for flight in flights:
             f.write(format_flight(flight))
             f.write("\n" + "-" * 40 + "\n")
@@ -59,12 +59,12 @@ def send_discord_message(departing_flights, returning_flights):
 
     if departing_flights:
         filename = "departings.txt"
-        write_flights_to_file(departing_flights, "🛫", filename)
+        write_flights_to_file(departing_flights, filename)
         filenames.append(filename)
 
     if returning_flights:
         filename = "returnings.txt"
-        write_flights_to_file(returning_flights, "🛬", filename)
+        write_flights_to_file(returning_flights, filename)
         filenames.append(filename)
 
     old_message_id = read_message_id()
