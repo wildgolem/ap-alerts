@@ -54,7 +54,7 @@ def format_flight(flight):
         return dt.strftime("%Y-%m-%d [%H:%M]") if dt else "Unknown"
 
     return (
-        f"{origin} ↔ {destination} | {duration}h <{layovers}>\n"
-        f"{format_time('DepartsAt')} → {format_time('ArrivesAt')}\n"
+        f"{origin} <-> {destination} | {duration}h <{layovers}>\n"
+        f"{format_time('DepartsAt')} -> {format_time('ArrivesAt')}\n"
         f"${cost} ({seats} seats left)"
     )
