@@ -6,7 +6,7 @@ import json
 API_URL = "https://seats.aero"
 HEADERS = {
     "accept": "application/json",
-    "Partner-Authorization": os.environ["API_KEY"]
+    "Partner-Authorization": "pro_2x7Jzh1IIYxZcV4dafvzoq5vWWD"#os.environ["API_KEY"]
 }
 
 

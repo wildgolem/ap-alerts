@@ -4,39 +4,74 @@ import time
 from formatter import format_flight
 
 
-MAX_FIELDS = 25
-WEBHOOK_DEPART = os.getenv("WEBHOOK_DEPART")
-WEBHOOK_RETURN = os.getenv("WEBHOOK_RETURN")
+WEBHOOK_URL = os.getenv("WEBHOOK_FLIGHT")
+ID_FILE = "id.txt"
 
 
-def send_flight_batches(flights, webhook_url, emoji):
-    total = len(flights)
-    total_pages = (total + MAX_FIELDS - 1) // MAX_FIELDS
+def write_flights_to_file(flights, emoji, filename):
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(f"{emoji} {len(flights)} flights found\n\n")
+        for flight in flights:
+            f.write(format_flight(flight))
+            f.write("\n" + "-" * 40 + "\n")
 
-    for i in range(0, total, MAX_FIELDS):
-        page_number = i // MAX_FIELDS + 1
-        chunk = flights[i:i + MAX_FIELDS]
-        embed = {
-            "title": f"**{emoji} {total} flights found ({page_number} of {total_pages})**",
-            "color": 15723208,
-            "fields": [format_flight(f) for f in chunk]
-        }
-        payload = {"embeds": [embed]}
 
-        try:
-            response = requests.post(webhook_url, json=payload, timeout=10)
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            print(f"Failed to send Discord message (page {page_number}): {e}")
-            if response is not None:
-                print(f"Response text: {response.text}")
+def read_message_id():
+    if os.path.exists(ID_FILE):
+        with open(ID_FILE, "r") as f:
+            return f.read().strip()
+    return None
 
-        time.sleep(1)
+
+def write_message_id(message_id):
+    with open(ID_FILE, "w") as f:
+        f.write(message_id)
+
+
+def delete_discord_message(webhook_url, message_id):
+    url = f"{webhook_url}/messages/{message_id}"
+    try:
+        response = requests.delete(url, timeout=10)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to delete message {message_id}: {e}")
+        if response is not None:
+            print(f"Response text: {response.text}")
+
+
+def send_files_to_discord(filenames, webhook_url):
+    files = [(f"file{i+1}", (os.path.basename(name), open(name, "rb"))) for i, name in enumerate(filenames)]
+    try:
+        response = requests.post(webhook_url, files=files, timeout=10)
+        response.raise_for_status()
+        return response.json().get("id")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send files to Discord: {e}")
+        if response is not None:
+            print(f"Response text: {response.text}")
+    finally:
+        for _, file_tuple in files:
+            file_tuple[1].close()
 
 
 def send_discord_message(departing_flights, returning_flights):
+    filenames = []
+
     if departing_flights:
-        send_flight_batches(departing_flights, WEBHOOK_DEPART, "🛫")
+        filename = "departings.txt"
+        write_flights_to_file(departing_flights, "🛫", filename)
+        filenames.append(filename)
 
     if returning_flights:
-        send_flight_batches(returning_flights, WEBHOOK_RETURN, "🛬")
+        filename = "returnings.txt"
+        write_flights_to_file(returning_flights, "🛬", filename)
+        filenames.append(filename)
+
+    old_message_id = read_message_id()
+    if old_message_id:
+        delete_discord_message(WEBHOOK_URL, old_message_id)
+        time.sleep(1)
+
+    new_message_id = send_files_to_discord(filenames, WEBHOOK_URL)
+    if new_message_id:
+        write_message_id(new_message_id)

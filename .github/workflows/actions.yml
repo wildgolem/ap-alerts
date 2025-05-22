@@ -25,6 +25,18 @@ jobs:
       - name: Execute Python script
         env:
           API_KEY: ${{ secrets.API_KEY }}
-          WEBHOOK_DEPART: ${{ secrets.WEBHOOK_DEPART }}
-          WEBHOOK_RETURN: ${{ secrets.WEBHOOK_RETURN }}
+          WEBHOOK_FLIGHT: ${{ secrets.WEBHOOK_FLIGHT }}
         run: python main.py
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "updated alerts"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

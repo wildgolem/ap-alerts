@@ -53,11 +53,8 @@ def format_flight(flight):
         dt = parse_datetime(flight.get(key, ""))
         return dt.strftime("%Y-%m-%d [%H:%M]") if dt else "Unknown"
 
-    return {
-        "name": f"__{origin} ↔ {destination} | {duration}h <{layovers}>__",
-        "value": (
-            f"{format_time('DepartsAt')} → {format_time('ArrivesAt')}\n"
-            f"${cost} (**{seats} left**)"
-        ),
-        "inline": False
-    }
+    return (
+        f"{origin} ↔ {destination} | {duration}h <{layovers}>\n"
+        f"{format_time('DepartsAt')} → {format_time('ArrivesAt')}\n"
+        f"${cost} ({seats} seats left)"
+    )
